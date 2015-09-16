@@ -3,14 +3,22 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
-      dist: {
+       options: {
+            separator: ';'
+        },
+
+      dist1: {
         src: [
-            'public/lib/*.js', // All JS in the libs folder
+            'public/lib/jquery.js', 'public/lib/underscore.js', 'public/lib/handlebars.js', 'public/lib/backbone.js', // All JS in the libs folder
         ],
-        dest: 'js/build/production.js',
+        dest: 'public/dist/libraries.min.js',
+      },
+      dist2: {
+        src: [
+            'public/client/*.js'
+        ],
+        dest: 'public/dist/webapp.min.js',
       }
-
-
     },
 
     mochaTest: {
@@ -31,17 +39,25 @@ module.exports = function(grunt) {
     uglify: {
         options: {
             // the banner is inserted at the top of the output
-            banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+            banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+            beautify:{
+              quote_keys:true
+            }
           },
           dist: {
             files: {
-              'js/dist/uglified.min.js': ['<%= concat.dist.dest %>']
+              'public/dist/libraries.min.js': ['<%= concat.dist1.dest %>'],
+              'public/dist/webapp.min.js': ['<%= concat.dist2.dest %>'],
             }
           }
+
+
+
+          
     },
 
     jshint: {
-      files: [
+      files: [ 'public/client/*.js'
         // Add filespec list here
       ],
       options: {
@@ -50,12 +66,21 @@ module.exports = function(grunt) {
         ignores: [
           'public/lib/**/*.js',
           'public/dist/**/*.js'
-        ]
+        ],
+        globals: {
+          jQuery: true,
+          console: true,
+          module: true
+        }
+
       }
     },
 
     cssmin: {
         // Add filespec list here
+        target:{
+          files: {'public/dist/style.min.css': ['public/style.css']}
+        }
     },
 
     watch: {
@@ -111,20 +136,21 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
 
-  grunt.registerTask('build', ['concat', 'uglify'
+  grunt.registerTask('build', ['jshint', 'concat:dist1', 'concat:dist2', 'uglify', 'cssmin', 'mochaTest'
 
   ]);
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
+      console.log("dont fire anything we are in production")
       // add your production server task here
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
-  grunt.registerTask('deploy', [
-      // add your production server task here
+  grunt.registerTask('deploy', ['build', 'upload' 
+      // add your production server task here'
   ]);
 
 
