@@ -31,4 +31,8 @@ app.post('/signup', handler.signupUser);
 
 app.get('/*', handler.navToLink);
 
+app.set("curentEnvironment", process.env.NODE_ENV);
+
+
+console.log("\n\n\n\n\n**** ENV is", app.get("curentEnvironment"));
 module.exports = app;
