@@ -8,9 +8,9 @@ var Schema = db.Schema;
     timestamp: Date
   });
 
-  userSchema.methods.hashPassword = function(){
+  userSchema.methods.hashPassword = function(input){
     var salt = bcrypt.genSaltSync(10);
-    var password = bcrypt.hashSync(this.password, salt);
+    var password = bcrypt.hashSync(input, salt);
     this.password = password;
   }
 
