@@ -7,14 +7,14 @@ var Schema = db.Schema;
     base_url: String,
     code: String,
     title: String,
-    visits: {Number, default: 0},
-    timestamp: Date.now
+    visits: {type: Number, default: 0},
+    timestamp: {type: Date, default: Date.now}
   });
 
   urlSchema.methods.encodeLink = function(){
     var shasum = crypto.createHash('sha1');
       shasum.update(this.url);
-      this.code = shasum.digest('hex').slice(0, 5));
+      this.code = shasum.digest('hex').slice(0, 5);
   }
 
   var Url = db.model('url', urlSchema);
