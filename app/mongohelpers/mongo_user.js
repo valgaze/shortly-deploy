@@ -5,7 +5,7 @@ var Schema = db.Schema;
   var userSchema = Schema({
     username: String,
     password: String,
-    timestamp: Date.now
+    timestamp: Date
   });
 
   userSchema.methods.hashPassword = function(){
