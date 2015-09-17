@@ -4,11 +4,15 @@ var curentEnvironment = process.env.NODE_ENV;
 
 
 if (curentEnvironment === "production"){
-  //Do some mongo stuff
-  /*
-  var db = do a bunch of mongo
-
-  */
+  var mongoose = require('mongoose');
+  //#TODO: is localhost the right thing to do here?
+  mongoose.connect('mongodb://localhost/test');
+  var db = mongoose.connection;
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function(callback) {
+    console.log('Mongo connected!!!! :-) ');
+  });
+  module.exports = mongoose;
 }else{
 
   var db = Bookshelf.initialize({
@@ -51,9 +55,9 @@ if (curentEnvironment === "production"){
       });
     }
   });
+  module.exports = db;
 
 }
 
 
 
-module.exports = db;
